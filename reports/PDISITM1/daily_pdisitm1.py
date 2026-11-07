@@ -13,6 +13,7 @@ BANK rows carry no debit or credit, so dramt and cramt can be added up directly.
 Exit code 0 = OK, 1 = failed (Task Scheduler shows it as "Last Run Result").
 Usage:  python daily_pdisitm1.py              (normal daily run)
         python daily_pdisitm1.py --no-upload  (local only, e.g. for testing)
+        python daily_pdisitm1.py --start 2025-01-01 --end 2025-12-31  (another date range)
 """
 
 import collections
@@ -27,8 +28,8 @@ import sys
 
 import pyodbc
 
-sys.path.insert(0, r"D:\Em_Project\reports\common")
-from formula_db import CONN_STR, FORBIDDEN, fix_text
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "common"))
+from formula_db import CONN_STR, FORBIDDEN, RCLONE, date_option, fix_text
 
 # ---------------------------------------------------------------------------
 # Configuration
@@ -39,7 +40,6 @@ OUT_ROOT      = HERE
 CSV_NAME      = "PDISITM1_claude.csv"    # same name every run, so the new file replaces the old one
 START_DATE    = dt.date(2026, 1, 1)
 END_DATE      = dt.date(2026, 10, 31)
-RCLONE        = r"D:\Em_Project\tools\rclone\rclone.exe"
 UPLOAD_REMOTE = "gdrive:Formula Reports/PDISITM1"   # rclone remote:path; "" disables upload
 
 # Report columns (Formula's names), then extras that make the file usable on its own.
@@ -173,4 +173,6 @@ def main():
 if __name__ == "__main__":
     if "--no-upload" in sys.argv:
         UPLOAD_REMOTE = ""
+    START_DATE = date_option("--start") or START_DATE
+    END_DATE = date_option("--end") or END_DATE
     sys.exit(main())

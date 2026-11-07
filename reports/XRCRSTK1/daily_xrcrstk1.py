@@ -10,6 +10,7 @@ Daily XRCRSTK1 (stock balance by product, all warehouses of the head office, as 
 Exit code 0 = OK, 1 = failed (Task Scheduler shows it as "Last Run Result").
 Usage:  python daily_xrcrstk1.py              (normal daily run)
         python daily_xrcrstk1.py --no-upload  (local only, e.g. for testing)
+        python daily_xrcrstk1.py --end 2026-10-31  (as of another date)
 """
 
 import collections
@@ -24,8 +25,8 @@ import sys
 
 import pyodbc
 
-sys.path.insert(0, r"D:\Em_Project\reports\common")
-from formula_db import CONN_STR, FORBIDDEN, fix_text
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "common"))
+from formula_db import CONN_STR, FORBIDDEN, RCLONE, date_option, fix_text
 
 # ---------------------------------------------------------------------------
 # Configuration
@@ -34,7 +35,6 @@ HERE          = os.path.dirname(os.path.abspath(__file__))
 SQL_PATH      = os.path.join(HERE, "xrcrstk1.sql")
 OUT_ROOT      = HERE
 CSV_NAME      = "XRCRSTK1_claude.csv"    # same name every run, so the new file replaces the old one
-RCLONE        = r"D:\Em_Project\tools\rclone\rclone.exe"
 UPLOAD_REMOTE = "gdrive:Formula Reports/XRCRSTK1"   # rclone remote:path; "" disables upload
 
 # Report columns (Formula's names), then extras that make the file usable on its own.
@@ -158,7 +158,7 @@ def upload(csv_path):
 def main():
     logging.basicConfig(stream=sys.stdout, level=logging.INFO, format="%(message)s")
     try:
-        as_of = dt.date.today()
+        as_of = date_option("--end") or dt.date.today()
         logging.info("XRCRSTK1 as of %s", as_of)
         prods, moves, docs = fetch(as_of)
         rows = report_rows(prods, moves, docs, as_of)

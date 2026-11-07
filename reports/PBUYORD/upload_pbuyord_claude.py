@@ -11,6 +11,7 @@ or with another CSV:
     python upload_pbuyord_claude.py "D:\\path\\to\\file.csv"
 """
 
+import os
 import sys
 from datetime import datetime
 
@@ -19,8 +20,11 @@ import gspread
 from gspread_dataframe import set_with_dataframe   # pip install gspread gspread_dataframe
 
 # ---------------------------------------------------------------- settings
-CSV_PATH = r"D:\Em_Project\reports\PBUYORD\PBUYORD_claude.csv"
-SERVICE_ACCOUNT_KEY = r"D:\Em_Project\config\yt-analysis-project-402700-6c9fee962152.json"
+CSV_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "PBUYORD_claude.csv")
+SERVICE_ACCOUNT_KEY = os.environ.get(
+    "GOOGLE_SA_KEY",
+    os.path.join(os.environ.get("EM_HOME", r"D:\Em_Project"), "config",
+                 "yt-analysis-project-402700-6c9fee962152.json"))
 SPREADSHEET_KEY = "11sUYth_syW5QzzdcYSovnW9fHysIgNpm285yTA4rYCs"
 SPREADSHEET_NAME = "PBUYORD"
 WORKSHEET_NAME = "PBUYORD_Claude"

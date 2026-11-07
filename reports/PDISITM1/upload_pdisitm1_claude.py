@@ -12,6 +12,7 @@ or with another CSV:
     python upload_pdisitm1_claude.py "D:\\path\\to\\file.csv"
 """
 
+import os
 import sys
 from datetime import datetime
 
@@ -20,8 +21,11 @@ import gspread
 from gspread_dataframe import set_with_dataframe   # pip install gspread gspread_dataframe
 
 # ---------------------------------------------------------------- settings
-CSV_PATH = r"D:\Em_Project\reports\PDISITM1\PDISITM1_claude.csv"
-SERVICE_ACCOUNT_KEY = r"D:\Em_Project\config\yt-analysis-project-402700-6c9fee962152.json"
+CSV_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "PDISITM1_claude.csv")
+SERVICE_ACCOUNT_KEY = os.environ.get(
+    "GOOGLE_SA_KEY",
+    os.path.join(os.environ.get("EM_HOME", r"D:\Em_Project"), "config",
+                 "yt-analysis-project-402700-6c9fee962152.json"))
 SPREADSHEET_KEY = "17IUycqF7OmTIo3G5xgBkXy21xAdWD0Eycpbp7kNMHSc"
 SPREADSHEET_NAME = "PDISITM1_2026"
 WORKSHEET_NAME = "PDISITM1_Claude"

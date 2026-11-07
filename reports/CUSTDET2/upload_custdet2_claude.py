@@ -11,6 +11,7 @@ or with another CSV:
     python upload_custdet2_claude.py "D:\\path\\to\\file.csv"
 """
 
+import os
 import sys
 from datetime import datetime
 
@@ -19,8 +20,11 @@ import gspread
 from gspread_dataframe import set_with_dataframe   # pip install gspread gspread_dataframe
 
 # ---------------------------------------------------------------- settings
-CSV_PATH = r"D:\Em_Project\reports\CUSTDET2\CUSTDET2_claude.csv"
-SERVICE_ACCOUNT_KEY = r"D:\Em_Project\config\yt-analysis-project-402700-6c9fee962152.json"
+CSV_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "CUSTDET2_claude.csv")
+SERVICE_ACCOUNT_KEY = os.environ.get(
+    "GOOGLE_SA_KEY",
+    os.path.join(os.environ.get("EM_HOME", r"D:\Em_Project"), "config",
+                 "yt-analysis-project-402700-6c9fee962152.json"))
 SPREADSHEET_KEY = "1T5N9z9638sPDX-s4jW1ZobHBDke9mdD6OaqhbkyBBjQ"
 SPREADSHEET_NAME = "CUSTDET2"
 WORKSHEET_NAME = "CUSTDET2_Claude"

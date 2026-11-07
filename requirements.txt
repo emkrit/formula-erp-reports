@@ -1,0 +1,6 @@
+# Python packages for the report scripts and the scheduler (pip install -r requirements.txt).
+# Not to be confused with requirement.txt, the original database discovery brief.
+pyodbc
+pandas
+gspread
+gspread_dataframe

@@ -23,8 +23,8 @@ import sys
 
 import pyodbc
 
-sys.path.insert(0, r"D:\Em_Project\reports\common")
-from formula_db import CONN_STR, FORBIDDEN, fix_text
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "common"))
+from formula_db import CONN_STR, FORBIDDEN, RCLONE, date_option, fix_text
 
 # ---------------------------------------------------------------------------
 # Configuration
@@ -33,7 +33,6 @@ HERE          = os.path.dirname(os.path.abspath(__file__))
 SQL_PATH      = os.path.join(HERE, "custdet2.sql")
 OUT_ROOT      = HERE
 CSV_NAME      = "CUSTDET2_claude.csv"    # same name every run, so the new file replaces the old one
-RCLONE        = r"D:\Em_Project\tools\rclone\rclone.exe"
 UPLOAD_REMOTE = "gdrive:Formula Reports/CUSTDET2"   # rclone remote:path; "" disables upload
 
 # Report columns (Formula's names), then extras that make the file usable on its own.

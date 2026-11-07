@@ -23,6 +23,14 @@ upload_<task>_claude.py          renames headings to Thai (formular_mapping.xlsx
 Google Sheet <TASK>, tab <TASK>_Claude
 ```
 
+## Project phases
+
+| Phase | What | Status |
+|---|---|---|
+| 1 | Find the ERP database and map its tables (`erp_discovery.md`, `erp_tables.md`) | Done |
+| 2 | Rebuild each report from SQL, check it against the sample, publish to Drive and Sheets (`reports/`) | Done |
+| 3 | Run the reports on a schedule set in a Google Sheet, with tracking, through GitHub Actions on the server (`scheduler/`, [docs/scheduling.md](docs/scheduling.md)) | Code ready; runner to be installed on the server |
+
 ## Folder layout
 
 ```
@@ -32,6 +40,10 @@ D:\Em_Project
 ├── erp_discovery.md           how the ERP and database were found
 ├── erp_tables.md              table list and module map for the FORMULA database
 ├── export_archive.py          one-off raw table export (output in archive/, not in git)
+├── requirements.txt           Python packages (pip install -r requirements.txt)
+├── .github\workflows\report-schedule.yml   GitHub Actions job, every 30 minutes on the server
+├── scheduler\run_schedule.py  reads the schedule sheet, runs what is due, writes results back
+├── docs\scheduling.md         Phase 3 setup and how to use the schedule sheet
 ├── Sample report\             reports saved from the Formula client (the targets to match)
 │   ├── <TASK>.CSV
 │   ├── Readme.txt             filters used when each sample was printed
@@ -75,9 +87,22 @@ must be shared with the key's `client_email`.
 cd D:\Em_Project\reports\PPDOR2
 python daily_ppdor2.py               # query, write CSV, upload to Drive
 python daily_ppdor2.py --no-upload   # local CSV only
+python daily_ppdor2.py --start 2025-01-01 --end 2025-06-30   # another date range
 python upload_ppdor2_claude.py       # load the CSV into the PPDOR2_Claude tab
 python analysis\compare.py           # check against Sample report\PPDOR2.CSV
 ```
+
+Dated reports take `--start` and `--end` (YYYY-MM-DD); XRCRSTK1 takes `--end` as its as-of date.
+Without them, each script uses the dates in its settings. rclone and the key are found under
+`D:\Em_Project` unless the `EM_HOME` environment variable points somewhere else.
+
+## Scheduled runs (Phase 3)
+
+The run days, times and data period of each report are set in the
+[Formula Report Schedule](https://docs.google.com/spreadsheets/d/1_gnLoYMXrjyr8eyc6TSQ2-EHqFIEwBYDnlp2JW6fPAs/edit)
+Google Sheet. GitHub Actions checks it every 30 minutes on the Formula server, runs what is due,
+and writes the status, row count and a log entry back to the sheet. Setup and use:
+[docs/scheduling.md](docs/scheduling.md).
 
 ## Adding a new report
 

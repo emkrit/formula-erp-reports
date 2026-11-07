@@ -11,6 +11,7 @@ Daily PPDOR2 (outstanding goods to receive, by product).
 Exit code 0 = OK, 1 = failed (Task Scheduler shows it as "Last Run Result").
 Usage:  python daily_ppdor2.py              (normal daily run)
         python daily_ppdor2.py --no-upload  (local only, e.g. for testing)
+        python daily_ppdor2.py --start 2025-01-01 --end 2025-12-31  (another date range)
         python daily_ppdor2.py --sample-range  (sample's date range, saved in analysis\\, no upload)
 """
 
@@ -25,8 +26,8 @@ import sys
 
 import pyodbc
 
-sys.path.insert(0, r"D:\Em_Project\reports\common")
-from formula_db import CONN_STR, FORBIDDEN, fix_text
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "common"))
+from formula_db import CONN_STR, FORBIDDEN, RCLONE, date_option, fix_text
 
 # ---------------------------------------------------------------------------
 # Configuration
@@ -37,7 +38,6 @@ OUT_ROOT      = HERE
 CSV_NAME      = "PPDOR2_claude.csv"      # same name every run, so the new file replaces the old one
 START_DATE    = dt.date(2025, 1, 1)
 SAMPLE_END    = dt.date(2026, 11, 30)    # end of the date range printed on the sample
-RCLONE        = r"D:\Em_Project\tools\rclone\rclone.exe"
 UPLOAD_REMOTE = "gdrive:Formula Reports/PPDOR2"     # rclone remote:path; "" disables upload
 
 # Report columns (Formula's names), then extras that make the file usable on its own.
@@ -110,7 +110,7 @@ def upload(csv_path):
 
 
 def main(end=None, out_dir=None):
-    end = end or dt.date.today()
+    end = end or date_option("--end") or dt.date.today()
     logging.basicConfig(stream=sys.stdout, level=logging.INFO, format="%(message)s")
     try:
         logging.info("PPDOR2 required dates %s .. %s", START_DATE, end)
@@ -131,6 +131,7 @@ def main(end=None, out_dir=None):
 if __name__ == "__main__":
     if "--no-upload" in sys.argv or "--sample-range" in sys.argv:
         UPLOAD_REMOTE = ""
+    START_DATE = date_option("--start") or START_DATE
     if "--sample-range" in sys.argv:
         sys.exit(main(SAMPLE_END, os.path.join(HERE, "analysis")))
     sys.exit(main())

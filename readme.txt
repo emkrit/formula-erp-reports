@@ -4,6 +4,11 @@ FORMULA ERP REPORTS - HOW TO PUT THIS PROJECT ON GITHUB
 This is a guide for creating the GitHub repository "formula-erp-reports" on your own computer.
 For how the project works, see README.md. GitHub shows that file on the repository's front page.
 
+UPDATE (Phase 3): the repository now exists (github.com/emkrit/formula-erp-reports). Once the
+GitHub runner is installed on the server (docs\scheduling.md), the server gets the code from
+GitHub on every run, so the robocopy steps in sections 3 and 6 are only needed for the files
+that are not in git (config\ and tools\).
+
 
 1. WHAT IS IN THE PROJECT
 -------------------------

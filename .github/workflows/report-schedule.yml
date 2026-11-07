@@ -1,0 +1,68 @@
+# Formula report schedule.
+#
+# Every 30 minutes GitHub starts this job on the Formula server (a self-hosted runner with the
+# label "formula"). scheduler/run_schedule.py reads the "Formula Report Schedule" Google Sheet and
+# runs the reports that are due, then writes the result back to the sheet.
+#
+# Run it by hand from the Actions tab: "Run workflow", then pick a task and, if you like, dates.
+# Setup: docs/scheduling.md.
+
+name: Formula report schedule
+
+on:
+  schedule:
+    - cron: "*/30 * * * *"        # UTC; the run times themselves are set in the sheet in Thailand time
+  workflow_dispatch:
+    inputs:
+      task:
+        description: "Report to run now. Leave blank to check the schedule as usual."
+        type: choice
+        required: false
+        default: ""
+        options: ["", "XRBUYOR1", "PGDRCVNT", "CUSTDET2", "PDISITM1", "PBUYORD", "PPDOR2", "XRCRSTK1"]
+      start:
+        description: "Start date YYYY-MM-DD (optional; default is the sheet's data period)"
+        required: false
+        default: ""
+      end:
+        description: "End date YYYY-MM-DD (optional; for XRCRSTK1 this is the as-of date)"
+        required: false
+        default: ""
+      dry_run:
+        description: "Only show what would run"
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+# One run at a time. A check that starts while reports are still running waits for them.
+concurrency:
+  group: formula-reports
+  cancel-in-progress: false
+
+jobs:
+  reports:
+    runs-on: [self-hosted, Windows, formula]
+    timeout-minutes: 240
+    env:
+      EM_HOME: D:\Em_Project          # holds config\ (Google key) and tools\rclone, which are not in git
+      PYTHONIOENCODING: utf-8
+      IN_TASK: ${{ inputs.task }}
+      IN_START: ${{ inputs.start }}
+      IN_END: ${{ inputs.end }}
+      IN_DRY_RUN: ${{ inputs.dry_run }}
+    steps:
+      - name: Get the code
+        uses: actions/checkout@v4
+
+      - name: Run the reports that are due
+        shell: powershell
+        run: |
+          $a = @("scheduler/run_schedule.py")
+          if ($env:IN_TASK)  { $a += @("--task",  $env:IN_TASK) }
+          if ($env:IN_START) { $a += @("--start", $env:IN_START) }
+          if ($env:IN_END)   { $a += @("--end",   $env:IN_END) }
+          if ($env:IN_DRY_RUN -eq "true") { $a += "--dry-run" }
+          python @a
+          exit $LASTEXITCODE

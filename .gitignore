@@ -1,0 +1,23 @@
+# Secrets: Google service-account key, never commit
+config/
+*.json.key
+rclone.conf
+
+# Tools and binaries (rclone.exe is 58 MB; install it separately)
+tools/
+
+# Raw database exports
+archive/
+
+# Data: code-only repository, no report CSVs (sample or generated)
+*.csv
+*.CSV
+
+# Python
+__pycache__/
+*.pyc
+
+# Windows / editors
+Thumbs.db
+desktop.ini
+.vscode/

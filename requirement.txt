@@ -1,0 +1,39 @@
+I want to find where our ERP system stores its data. The ERP runs on our office LAN (no cloud). The ERP client is installed on this computer and works.
+STRICT RULES:
+- READ-ONLY. Do not modify, delete, move, or write any file outside this current folder.
+- Do not run any SQL that changes data (no INSERT, UPDATE, DELETE, DROP, ALTER, CREATE). SELECT only.
+- Do not stop, restart, or reconfigure any service.
+- Ask me before every command that connects to another machine on the network.
+Objective
+To get full raw data for manual reporting. Get as much as detail from database as you can
+TASKS:
+- ERP Name - Formular
+-Folder - C:\Users\Administrator\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Formula
+1. Find where the ERP client is installed (check Program Files, Program Files (x86), Start Menu shortcuts, and running processes).
+2. Look in its folder and in AppData / ProgramData for config files (.ini, .config, .xml, .json, .udl, registry entries) that show the database type, server name or IP, database name, port, or shared data folder path.
+3. Tell me what database engine it uses (e.g. SQL Server, MySQL, PostgreSQL, Firebird, DBF/FoxPro, Access).
+4. Check which client tools / drivers are on this PC (ODBC data sources, sqlcmd, etc.).
+5. Do NOT print any passwords in full. Mask them.
+6. Write a summary report to erp_discovery.md: ERP name, DB engine, server/IP, database name, how to connect, and the next safe step.
+
+
+Update: I found the connection myself, so drop the config-file discovery completely. Do not read any config files or look for passwords.
+
+Confirmed connection details:
+- SQL Server: "server" (this computer)
+- Database: FORMULA (also cloudreportdb exists)
+- Windows authentication works: sqlcmd -S server -E  (no password needed)
+- Tested: sqlcmd -S server -E -Q "SELECT name FROM sys.databases" listed FORMULA successfully.
+
+Context: The company is retiring this Formula ERP. I'm authorized to extract its historical data for internal business decisions.
+
+Rules:
+- SELECT queries only. Never run INSERT, UPDATE, DELETE, ALTER, DROP, CREATE, TRUNCATE, EXEC, BACKUP or RESTORE.
+- Use TOP for samples. Ask me before each command.
+- Save outputs only inside D:\Em_Project.
+
+Tasks:
+1. List all tables in FORMULA with row counts (skip empty tables), sorted by row count.
+2. Map tables to Formula modules (FMGL, FMAP, FMAR, FMSO, FMPO, FMIC, FMFA) based on table and column names.
+3. For the main tables, show column names and 5 sample rows.
+4. Save everything to D:\Em_Project\erp_tables.md, then stop and wait for me before exporting any data.

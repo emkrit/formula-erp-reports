@@ -1,0 +1,36 @@
+
+<Task>
+
+Sample report: D:\Em_Project\Sample report\<Task>
+
+Filters: read filter detail from file D:\Em_Project\Sample report\readme
+
+Step 1 - Work out the SQL
+Use the sample to find the tables, joins, filters and column rules. If anything is
+unclear, ask me instead of guessing.
+
+Step 2 - Create the files in D:\Em_Project\reports\<TASK>\
+- <task>.sql
+- daily_<task>.py, which runs the query and saves <TASK>_claude.csv, replacing the old
+  file with no dated copies
+
+Step 3 - Compare with the sample
+Compare over the sample's date range and report how many documents, lines and amounts
+match. Explain each difference and say whether you confirmed the cause. Stop and show
+me before uploading if the match is poor.
+
+Step 4 - Run and upload
+Run the report and upload the CSV to gdrive:Formula Reports/<TASK>/, then confirm the
+Drive file matches the local file.
+
+
+Step 5 - Upload to Google Sheets
+Run the upload script. Keep code columns as text and use the Thai headings from formular_mapping.xlsx 
+
+Finish with the row count, document count, date range, Drive path and any open issues.
+
+STRICT RULES:
+- READ-ONLY. Do not modify, delete, move, or write any file outside this current folder.
+- Do not run any SQL that changes data (no INSERT, UPDATE, DELETE, DROP, ALTER, CREATE). SELECT only.
+- Do not stop, restart, or reconfigure any service.
+- Ask me before every command that connects to another machine on the network.
